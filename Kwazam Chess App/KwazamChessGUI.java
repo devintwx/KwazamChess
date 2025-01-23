@@ -75,65 +75,88 @@ public class KwazamChessGUI extends JFrame {
         }
     }
 
-    /**
-     * Starts the Kwazam Chess game by setting up the menu and making the window visible.
-     */
-    public void startTheGame() {
-        setupMenu();
-        setVisible(true);
-    }
 
     /**
      * Displays the welcome menu before starting the game.
      */
     public void showWelcomeMenu() {
-        JFrame welcomeScreen = new JFrame("♙Kwazam Chess");
-        welcomeScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        welcomeScreen.setSize(400, 300);
-        welcomeScreen.setLayout(new BorderLayout());
+    JFrame welcomeScreen = new JFrame("♙Kwazam Chess");
+    welcomeScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    welcomeScreen.setSize(400, 300);
+    welcomeScreen.setLayout(new BorderLayout());
 
-        // Title Panel
-        JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
-        JLabel titleLabel = new JLabel("♙Kwazam Chess", JLabel.CENTER);
-        titleLabel.setFont(new Font("Serif", Font.BOLD, 30)); // Set the font and size for the title.
-        titlePanel.add(titleLabel);
+    // Set the background color of the main menu window
+    welcomeScreen.getContentPane().setBackground(new Color(250, 240, 230)); 
 
-        // Button Panel
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 10, 10));
-        JButton startButton = new JButton("Start a new game");
-        JButton loadButton = new JButton("Load game");
-        JButton exitButton = new JButton("Exit");
+    // Title Panel
+    JPanel titlePanel = new JPanel(new GridBagLayout()); 
+    titlePanel.setBackground(new Color(250, 240, 230)); 
 
-        buttonPanel.add(startButton);
-        buttonPanel.add(loadButton);
-        buttonPanel.add(exitButton);
+    JLabel titleLabel = new JLabel("♙Kwazam Chess", JLabel.CENTER);
+    titleLabel.setFont(new Font("Serif", Font.BOLD, 30)); 
+    titleLabel.setForeground(new Color(219, 127, 48)); 
 
-        // Add ActionListeners
-        startButton.addActionListener(e -> {
-            welcomeScreen.dispose();
-            startTheGame();
-        });
+    
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.anchor = GridBagConstraints.CENTER; 
+    titlePanel.add(titleLabel, gbc);
 
-        loadButton.addActionListener(e -> {
-            welcomeScreen.dispose();
-            try {
-                game.load();
-                setupMenu();
-                setVisible(true);
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(welcomeScreen, "Failed to load game data!");
-            }
-        });
+    // Button Panel
+    JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+    buttonPanel.setBackground(new Color(250, 240, 230)); 
 
-        exitButton.addActionListener(e -> System.exit(0));
+    // Create buttons with custom colors and smaller size
+    JButton startButton = createCustomButton("Start a new game");
+    JButton loadButton = createCustomButton("Load game");
+    JButton exitButton = createCustomButton("Exit");
 
-        // Add panels to frame
-        welcomeScreen.add(titlePanel, BorderLayout.NORTH);
-        welcomeScreen.add(buttonPanel, BorderLayout.CENTER);
-        welcomeScreen.setLocationRelativeTo(null); // Center the frame on the screen.
-        welcomeScreen.setVisible(true);
-    }
+    // Set preferred size for shorter buttons
+    Dimension buttonSize = new Dimension(150, 30); 
+    startButton.setPreferredSize(buttonSize);
+    loadButton.setPreferredSize(buttonSize);
+    exitButton.setPreferredSize(buttonSize);
+
+    buttonPanel.add(startButton);
+    buttonPanel.add(loadButton);
+    buttonPanel.add(exitButton);
+
+    // Add ActionListeners
+    startButton.addActionListener(e -> {
+        welcomeScreen.dispose(); // Close the welcome screen
+        new ChessApp(); // Start the game by creating an instance of ChessApp
+    });
+
+    loadButton.addActionListener(e -> {
+        welcomeScreen.dispose(); // Close the welcome screen
+        ChessApp chessApp = new ChessApp(); // Create an instance of ChessApp
+        
+    });
+
+    exitButton.addActionListener(e -> System.exit(0));
+
+    // Add panels to frame
+    welcomeScreen.add(titlePanel, BorderLayout.CENTER); // Place title panel in the center
+    welcomeScreen.add(buttonPanel, BorderLayout.SOUTH); // Place button panel at the bottom
+    welcomeScreen.setLocationRelativeTo(null); // Center the frame on the screen.
+    welcomeScreen.setVisible(true);
+}
+
+/**
+ * Helper method to create a button with custom colors.
+ *
+ * @param text The text to display on the button.
+ * @return A JButton with custom background and text colors.
+ */
+private JButton createCustomButton(String text) {
+    JButton button = new JButton(text);
+    button.setBackground(new Color(255, 183, 122)); 
+    button.setForeground(new Color(219, 127, 48)); 
+    button.setFocusPainted(false); 
+    button.setFont(new Font("Serif", Font.BOLD, 14)); 
+    return button;
+}
 
     /**
      * Sets up the menu and layout for the main game GUI.
