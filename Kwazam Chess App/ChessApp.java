@@ -54,6 +54,8 @@ public class ChessApp implements ActionListener {
             }
         });
 
+        
+
         // Add load functionality to the menu.
 kwazamChessGUI.addLoadMenuListener(e -> {
     int showConfirmDialog = JOptionPane.showConfirmDialog(null, "Are you willing to load the previous game?");
@@ -120,29 +122,39 @@ public void actionPerformed(ActionEvent e) {
             highlightValidMoves(selectedSquare); // Highlight valid moves
         }
     } else {
-        // If a square is already selected, attempt to move the piece
-        System.out.println("Attempting to move from: (" + selectedSquare.getRowPosition() + ", " + selectedSquare.getColPosition() + ")");
-        System.out.println("Attempting to move to: (" + slot.getRowPosition() + ", " + slot.getColPosition() + ")");
-
-        boolean moved = chessGame.move(selectedSquare, slot); // Pass both selectedSquare and destination slot
-        if (moved) {
-            System.out.println("Move successful");
-            clearHighlights(); // Clear highlights after a successful move
-            selectedSquare = null; // Reset the selected square
-
-            // Update the game status and message
-            updateGameStatus(false); // Refresh the board
-
-            // Update the message and bottom panel color based on the current player's turn
-            String team = chessGame.getPlayerTurn().getColor();
-            kwazamChessGUI.setMessage("Let's move team " + team + ", now it is your turn!!!", team);
-
-            // Update the move counter
-            kwazamChessGUI.updateMoveCounter(chessGame.getPlayerTurnNum());
-        } else {
-            System.out.println("Invalid move, resetting selection");
+        // If a square is already selected, check if the clicked square is the same as the selected square
+        if (slot == selectedSquare) {
+            // If the same square is clicked again, reset the selection
+            System.out.println("Resetting selection for the same piece.");
             clearHighlights();
             selectedSquare = null;
+        } else {
+            // Attempt to move the piece to the new square
+            System.out.println("Attempting to move from: (" + selectedSquare.getRowPosition() + ", " + selectedSquare.getColPosition() + ")");
+            System.out.println("Attempting to move to: (" + slot.getRowPosition() + ", " + slot.getColPosition() + ")");
+
+            boolean moved = chessGame.move(selectedSquare, slot); // Pass both selectedSquare and destination slot
+            if (moved) {
+                System.out.println("Move successful");
+                clearHighlights(); // Clear highlights after a successful move
+                selectedSquare = null; // Reset the selected square
+
+                // Update the game status and message
+                updateGameStatus(false); // Refresh the board
+
+                // Update the message and bottom panel color based on the current player's turn
+                String team = chessGame.getPlayerTurn().getColor();
+                kwazamChessGUI.setMessage("Let's move team " + team + ", now it is your turn!!!", team);
+
+                // Update the move counter
+                kwazamChessGUI.updateMoveCounter(chessGame.getPlayerTurnNum());
+            } else {
+                // Show a pop-up window for invalid moves
+                JOptionPane.showMessageDialog(null, "Invalid move! Please try again.", "Invalid Move", JOptionPane.ERROR_MESSAGE);
+                System.out.println("Invalid move, resetting selection");
+                clearHighlights();
+                selectedSquare = null;
+            }
         }
     }
 }
@@ -247,7 +259,7 @@ public void actionPerformed(ActionEvent e) {
      *
      * @param endGame Indicates if the game has ended.
      */
-    private void updateGameStatus(boolean endGame) {
+   private void updateGameStatus(boolean endGame) {
     kwazamChessGUI.panelInTheCenter.removeAll(); // Clear all buttons from the panel.
     buttonArrayList.clear(); // Clear the button list.
     displayBoard(); // Recreate the board.
