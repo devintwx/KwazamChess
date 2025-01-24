@@ -79,48 +79,65 @@ public class KwazamChessGUI extends JFrame {
     /**
      * Displays the welcome menu before starting the game.
      */
-    public void showWelcomeMenu() {
+public void showWelcomeMenu() {
     JFrame welcomeScreen = new JFrame("♙Kwazam Chess");
     welcomeScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     welcomeScreen.setSize(400, 300);
     welcomeScreen.setLayout(new BorderLayout());
 
     // Set the background color of the main menu window
-    welcomeScreen.getContentPane().setBackground(new Color(250, 240, 230)); 
+    welcomeScreen.getContentPane().setBackground(new Color(242, 227, 211));
 
     // Title Panel
-    JPanel titlePanel = new JPanel(new GridBagLayout()); 
-    titlePanel.setBackground(new Color(250, 240, 230)); 
+    JPanel titlePanel = new JPanel(new GridBagLayout()); // Use GridBagLayout for precise centering
+    titlePanel.setBackground(new Color(242, 227, 211)); 
 
     JLabel titleLabel = new JLabel("♙Kwazam Chess", JLabel.CENTER);
     titleLabel.setFont(new Font("Serif", Font.BOLD, 30)); 
-    titleLabel.setForeground(new Color(219, 127, 48)); 
+    titleLabel.setForeground(new Color(181, 153, 132)); 
 
-    
+    // Add the title label to the title panel with constraints to center it
     GridBagConstraints gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 0;
-    gbc.anchor = GridBagConstraints.CENTER; 
+    gbc.anchor = GridBagConstraints.CENTER; // Center the label
     titlePanel.add(titleLabel, gbc);
 
     // Button Panel
-    JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 10, 10));
-    buttonPanel.setBackground(new Color(250, 240, 230)); 
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.setBackground(new Color(242, 227, 211)); 
+    buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS)); // Use BoxLayout for vertical alignment
 
-    // Create buttons with custom colors and smaller size
-    JButton startButton = createCustomButton("Start a new game");
-    JButton loadButton = createCustomButton("Load game");
+    // Create buttons with custom colors and same width as the title
+    JButton startButton = createCustomButton("Start");
+    JButton creditButton = createCustomButton("Credit");
     JButton exitButton = createCustomButton("Exit");
 
-    // Set preferred size for shorter buttons
-    Dimension buttonSize = new Dimension(150, 30); 
-    startButton.setPreferredSize(buttonSize);
-    loadButton.setPreferredSize(buttonSize);
-    exitButton.setPreferredSize(buttonSize);
+    // Calculate the width of the title label
+    int titleWidth = titleLabel.getPreferredSize().width;
 
+    // Set preferred size for buttons to match the title width
+    Dimension buttonSize = new Dimension(titleWidth, 30); // Same width as the title, height is 30
+    startButton.setPreferredSize(buttonSize);
+    startButton.setMaximumSize(buttonSize); 
+    creditButton.setPreferredSize(buttonSize);
+    creditButton.setMaximumSize(buttonSize); 
+    exitButton.setPreferredSize(buttonSize);
+    exitButton.setMaximumSize(buttonSize);
+
+    // Center the buttons horizontally
+    startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    creditButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+    // Add buttons to the panel with vertical spacing
+    buttonPanel.add(Box.createVerticalStrut(10)); // Add some vertical spacing
     buttonPanel.add(startButton);
-    buttonPanel.add(loadButton);
+    buttonPanel.add(Box.createVerticalStrut(10)); // Add some vertical spacing
+    buttonPanel.add(creditButton);
+    buttonPanel.add(Box.createVerticalStrut(10)); // Add some vertical spacing
     buttonPanel.add(exitButton);
+    buttonPanel.add(Box.createVerticalStrut(20)); // Add extra bottom margin below the Exit button
 
     // Add ActionListeners
     startButton.addActionListener(e -> {
@@ -128,11 +145,7 @@ public class KwazamChessGUI extends JFrame {
         new ChessApp(); // Start the game by creating an instance of ChessApp
     });
 
-    loadButton.addActionListener(e -> {
-        welcomeScreen.dispose(); // Close the welcome screen
-        ChessApp chessApp = new ChessApp(); // Create an instance of ChessApp
-        
-    });
+    creditButton.addActionListener(e -> showCredits());
 
     exitButton.addActionListener(e -> System.exit(0));
 
@@ -144,6 +157,27 @@ public class KwazamChessGUI extends JFrame {
 }
 
 /**
+     * Displays the credits in a new window.
+     */
+    private void showCredits() {
+        JFrame creditFrame = new JFrame("Credits");
+        creditFrame.setSize(400, 200);
+        creditFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        creditFrame.setLayout(new BorderLayout());
+
+        JTextArea creditText = new JTextArea();
+        creditText.setText("♙Kwazam Chess\nDevelop by TT9L Group C\n\n1. 1211112069 Tang Wei Xiong\n2. 1211108003 Joey Tan Rou Yi\n3. 1211108404 Low Wan Jin\n4. 1211107904 Yeong Zi Yan");
+        creditText.setFont(new Font("Serif", Font.PLAIN, 14));
+        creditText.setEditable(false);
+        creditText.setBackground(new Color(242, 227, 211));
+        creditText.setForeground(new Color(0, 0, 0));
+
+        creditFrame.add(creditText, BorderLayout.CENTER);
+        creditFrame.setLocationRelativeTo(null); // Center the frame on the screen.
+        creditFrame.setVisible(true);
+    }
+
+/**
  * Helper method to create a button with custom colors.
  *
  * @param text The text to display on the button.
@@ -151,8 +185,8 @@ public class KwazamChessGUI extends JFrame {
  */
 private JButton createCustomButton(String text) {
     JButton button = new JButton(text);
-    button.setBackground(new Color(255, 183, 122)); 
-    button.setForeground(new Color(219, 127, 48)); 
+    button.setBackground(new Color(181, 153, 132)); 
+    button.setForeground(new Color(242, 227, 211)); 
     button.setFocusPainted(false); 
     button.setFont(new Font("Serif", Font.BOLD, 14)); 
     return button;
