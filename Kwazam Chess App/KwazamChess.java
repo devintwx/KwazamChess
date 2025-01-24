@@ -158,19 +158,29 @@ public class KwazamChess {
             }
 
             // Load game state if available
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine().trim();
-                if (line.startsWith("Player to Move:")) {
-                    String playerColor = line.substring(line.lastIndexOf(" ") + 1);
-                    setPlayerTurnNum(playerColor.equals("B") ? 0 : 1); // Set player turn
-                } else if (line.startsWith("Move Count:")) {
-                    int moveCount = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
-                    setPlayerTurnNum(moveCount); // Set move count
-                }
+        while (scanner.hasNextLine()) {
+        String line = scanner.nextLine().trim();
+        if (line.startsWith("Player to Move:")) {
+            String playerColor = line.substring(line.lastIndexOf(" ") + 1);
+            setPlayerTurnNum(playerColor.equals("B") ? 0 : 1); // Set player turn
+
+            // Flip the board if it's Red's turn
+            if (playerColor.equals("R")) {
+                chessboard.reverse();
             }
+        } else if (line.startsWith("Move Count:")) {
+            int moveCount = Integer.parseInt(line.substring(line.lastIndexOf(" ") + 1));
+            setPlayerTurnNum(moveCount); // Set move count
+        }
+    }
 
             hasWinner = false;
             JOptionPane.showMessageDialog(null, "Game loaded successfully from " + selectedFileName);
+
+            // Update the message to reflect whose turn it is
+    String team = getPlayerTurn().getColor();
+
+            
         }
     }
 
@@ -258,6 +268,16 @@ public class KwazamChess {
         // Move the piece to the destination square
         toSquare.setPlacedPiece(piece);
         fromSquare.setPlacedPiece(null);
+
+        // Check if the Ram has reached the opposite end
+        if (piece.getPieceName().equals("Ram")) {
+            int oppositeEnd = chessboard.isFlipped() ? 0 : 7;
+            if (toX == (piece.getOwner().getColor().equals("B") ? 0 : oppositeEnd)) {
+                piece.setHasReachedEnd(true); // Set the "reached end" status
+                System.out.println("Ram reached end: hasReachedEnd = true");
+            }
+        }
+
         playerTurnNum++; // Increment the turn counter
 
         // Check for a winner after the move
@@ -347,28 +367,36 @@ private boolean isValidRamMove(int fromX, int fromY, int toX, int toY, ChessPiec
         return false; // Cannot capture a piece of the same color
     }
 
+    // Determine the opposite end based on the board's flipped state and the Ram's owner
+    int oppositeEnd;
+    if (chessboard.isFlipped()) {
+        oppositeEnd = ram.getOwner().getColor().equals("B") ? 7 : 0; // Flipped board
+    } else {
+        oppositeEnd = ram.getOwner().getColor().equals("B") ? 0 : 7; // Normal board
+    }
+
     // Determine the direction of movement based on whether the Ram has reached the end
     if (ram.hasReachedEnd()) {
         // Ram is moving backward (toward its own side)
         if (deltaX == 1) {
-            // Check if the destination is the starting row (row 7 for Blue, row 0 for Red)
+            // Prevent the Ram from moving back to its starting row (row 0 for Red, row 7 for Blue)
             if (toX == (ram.getOwner().getColor().equals("B") ? 7 : 0)) {
-                ram.setHasReachedEnd(false); // Reset the "reached end" status
-                System.out.println("Ram reset: hasReachedEnd = false");
+                System.out.println("Invalid move: Ram cannot move back to its starting row");
+                return false;
             }
             System.out.println("Valid backward move");
             return true;
         }
         // Allow the Ram to move forward to the opponent's starting row to capture the Sau
-        else if (deltaX == -1 && toX == (ram.getOwner().getColor().equals("B") ? 0 : 7)) {
+        else if (deltaX == -1 && toX == oppositeEnd) {
             System.out.println("Valid forward move to capture Sau at the end");
             return true;
         }
     } else {
         // Ram is moving forward (toward the opponent's side)
         if (deltaX == -1) {
-            // Check if the destination is the opposite end (row 0 for Blue, row 7 for Red)
-            if (toX == (ram.getOwner().getColor().equals("B") ? 0 : 7)) {
+            // Check if the destination is the opposite end
+            if (toX == oppositeEnd) {
                 ram.setHasReachedEnd(true); // Set the "reached end" status
                 System.out.println("Ram reached end: hasReachedEnd = true");
             }
