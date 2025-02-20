@@ -6,5 +6,5 @@ Develop by TT9L Group C
 3. 1211107904 Yeong Zi Yan
 4. 1211112069 Tang Wei Xiong
 
-For OOAD Assignment
-Don't copy, later get caught by Ian Chai
+For MMU OOAD Assigment
+Don't copy the code, later get caught by Ian Chai
